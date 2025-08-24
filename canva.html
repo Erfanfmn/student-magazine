@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مجله دانشجویی - پایگاه مقالات علمی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .modal {
+            display: none;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #667eea;
+        }
+        
+        .stats-counter {
+            animation: countUp 2s ease-out;
+        }
+        
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .article-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(45deg, #f0f2f5, #e1e5e9);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-6">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-blue-600 ml-4">📚 مجله دانشجویی</div>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-md mx-8">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="جستجو در مقالات..." 
+                               class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <button class="text-gray-600 hover:text-blue-600">
+                        <i class="fas fa-bell text-xl"></i>
+                    </button>
+                    <button class="text-gray-600 hover:text-blue-600">
+                        <i class="fas fa-user text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="border-t border-gray-200">
+                <div class="flex items-center space-x-8 space-x-reverse py-4">
+                    <button onclick="showHomePage()" class="nav-link text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fas fa-home ml-2"></i>صفحه اصلی
+                    </button>
+                    <div class="relative group">
+                        <button class="nav-link text-gray-700 hover:text-blue-600 font-medium">
+                            <i class="fas fa-list ml-2"></i>دسته‌بندی
+                            <i class="fas fa-chevron-down mr-1 text-sm"></i>
+                        </button>
+                        <div class="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                            <button onclick="showCategoryArticles('علوم کامپیوتر')" class="block w-full text-right px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">علوم کامپیوتر</button>
+                            <button onclick="showCategoryArticles('مهندسی')" class="block w-full text-right px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">مهندسی</button>
+                            <button onclick="showCategoryArticles('پزشکی')" class="block w-full text-right px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">پزشکی</button>
+                            <button onclick="showCategoryArticles('علوم انسانی')" class="block w-full text-right px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">علوم انسانی</button>
+                            <button onclick="showCategoryArticles('هنر')" class="block w-full text-right px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600">هنر</button>
+                        </div>
+                    </div>
+                    <button onclick="showAboutPage()" class="nav-link text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fas fa-info-circle ml-2"></i>درباره
+                    </button>
+                    <button onclick="showNewsPage()" class="nav-link text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fas fa-bullhorn ml-2"></i>اطلاعیه‌ها
+                    </button>
+                    <button onclick="showArchivePage()" class="nav-link text-gray-700 hover:text-blue-600 font-medium">
+                        <i class="fas fa-archive ml-2"></i>آرشیو مقالات
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-16" id="heroSection">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-5xl font-bold mb-4">پایگاه مقالات علمی دانشجویی</h1>
+            <p class="text-xl text-blue-100 mb-8">مکانی برای به اشتراک گذاری دانش و تجربه</p>
+            <button onclick="showSubmitForm()" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                <i class="fas fa-plus ml-2"></i>ارسال مقاله
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12" id="mainContent">
+        <!-- Home Page Content -->
+        <div id="homePage">
+            <!-- Popular Articles Section -->
+            <section class="mb-16">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800">
+                        <i class="fas fa-fire text-orange-500 ml-3"></i>پربازدیدترین مقالات
+                    </h2>
+                    <button onclick="showAllArticles('popular')" class="text-blue-600 hover:text-blue-800 font-medium">
+                        مشاهده همه <i class="fas fa-arrow-left mr-2"></i>
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="popularArticles">
+                    <!-- Popular articles will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Latest Articles Section -->
+            <section class="mb-16">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800">
+                        <i class="fas fa-clock text-green-500 ml-3"></i>جدیدترین مقالات
+                    </h2>
+                    <button onclick="showAllArticles('latest')" class="text-blue-600 hover:text-blue-800 font-medium">
+                        مشاهده همه <i class="fas fa-arrow-left mr-2"></i>
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="latestArticles">
+                    <!-- Latest articles will be loaded here -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Submit Article Page -->
+        <div id="submitPage" class="hidden">
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-paper-plane text-blue-500 ml-3"></i>ارسال مقاله جدید
+                </h2>
+                <form id="submitForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">عنوان مقاله *</label>
+                            <input type="text" id="submitTitle" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">دسته‌بندی *</label>
+                            <select id="submitCategory" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">انتخاب دسته‌بندی</option>
+                                <option value="علوم کامپیوتر">علوم کامپیوتر</option>
+                                <option value="مهندسی">مهندسی</option>
+                                <option value="پزشکی">پزشکی</option>
+                                <option value="علوم انسانی">علوم انسانی</option>
+                                <option value="هنر">هنر</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">نام نویسندگان *</label>
+                        <input type="text" id="submitAuthors" required placeholder="مثال: دکتر علی احمدی، مهندس سارا محمدی" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ایمیل تماس *</label>
+                        <input type="email" id="submitEmail" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">خلاصه مقاله *</label>
+                        <textarea id="submitSummary" rows="4" required placeholder="خلاصه‌ای از محتوای مقاله..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">فایل مقاله (PDF) *</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-600 mb-2">فایل PDF مقاله را اینجا بکشید یا کلیک کنید</p>
+                            <input type="file" id="submitFile" accept=".pdf" required class="hidden">
+                            <button type="button" onclick="document.getElementById('submitFile').click()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                انتخاب فایل
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <p class="text-yellow-800 text-sm">
+                            <i class="fas fa-info-circle ml-2"></i>
+                            مقاله شما پس از بررسی توسط تیم علمی منتشر خواهد شد. این فرآیند معمولاً ۳-۵ روز کاری طول می‌کشد.
+                        </p>
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-paper-plane ml-2"></i>ارسال مقاله
+                        </button>
+                        <button type="button" onclick="showHomePage()" class="bg-gray-500 text-white px-8 py-3 rounded-lg hover:bg-gray-600 transition-colors">
+                            انصراف
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="aboutPage" class="hidden">
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-info-circle text-blue-500 ml-3"></i>درباره مجله دانشجویی
+                </h2>
+                <div class="prose max-w-none text-gray-700 leading-relaxed">
+                    <p class="mb-6">مجله دانشجویی یک پلتفرم علمی و آموزشی است که با هدف ارتقای سطح دانش و تبادل تجربیات میان دانشجویان و اساتید راه‌اندازی شده است.</p>
+                    
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">اهداف ما:</h3>
+                    <ul class="list-disc list-inside mb-6 space-y-2">
+                        <li>فراهم کردن بستری برای انتشار مقالات علمی دانشجویان</li>
+                        <li>ترویج فرهنگ پژوهش و نوآوری در میان جوانان</li>
+                        <li>ایجاد ارتباط میان دانشجویان و اساتید مختلف رشته‌ها</li>
+                        <li>حمایت از ایده‌های نو و خلاقانه</li>
+                    </ul>
+                    
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">ویژگی‌های مجله:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 mb-2">داوری علمی</h4>
+                            <p class="text-blue-700 text-sm">تمامی مقالات توسط اساتید مجرب بررسی می‌شوند</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-green-800 mb-2">دسترسی آزاد</h4>
+                            <p class="text-green-700 text-sm">همه مقالات به صورت رایگان در دسترس عموم قرار دارند</p>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 mb-2">تنوع موضوعی</h4>
+                            <p class="text-purple-700 text-sm">پوشش گسترده رشته‌های مختلف علمی و انسانی</p>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-orange-800 mb-2">پشتیبانی کامل</h4>
+                            <p class="text-orange-700 text-sm">راهنمایی نویسندگان در تمام مراحل انتشار</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Archive Page -->
+        <div id="archivePage" class="hidden">
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-archive text-blue-500 ml-3"></i>آرشیو مقالات
+                </h2>
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <button onclick="filterArchive('all')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        همه مقالات
+                    </button>
+                    <button onclick="filterArchive('علوم کامپیوتر')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+                        علوم کامپیوتر
+                    </button>
+                    <button onclick="filterArchive('پزشکی')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+                        پزشکی
+                    </button>
+                    <button onclick="filterArchive('مهندسی')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+                        مهندسی
+                    </button>
+                    <button onclick="filterArchive('علوم انسانی')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+                        علوم انسانی
+                    </button>
+                    <button onclick="filterArchive('هنر')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+                        هنر
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="archiveArticles">
+                    <!-- Archive articles will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- News Page -->
+        <div id="newsPage" class="hidden">
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-bullhorn text-blue-500 ml-3"></i>اطلاعیه‌ها
+                </h2>
+                <div class="space-y-6" id="newsList">
+                    <!-- News will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- All Articles Page -->
+        <div id="allArticlesPage" class="hidden">
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6" id="allArticlesTitle">
+                    <i class="fas fa-list text-blue-500 ml-3"></i>همه مقالات
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="allArticlesList">
+                    <!-- All articles will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section (Only on Home Page) -->
+        <div id="statsSection">
+            <section class="bg-white rounded-lg shadow-lg p-8 mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 text-center mb-8">
+                    <i class="fas fa-chart-bar text-blue-500 ml-3"></i>آمار سایت
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-blue-600 stats-counter" id="totalArticles">0</div>
+                        <p class="text-gray-600 mt-2">تعداد مقالات</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-green-600 stats-counter" id="totalViews">0</div>
+                        <p class="text-gray-600 mt-2">کل بازدیدها</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-purple-600 stats-counter" id="totalAuthors">0</div>
+                        <p class="text-gray-600 mt-2">نویسندگان فعال</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Quick Access -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-link ml-2"></i>دسترسی سریع
+                    </h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">صفحه اصلی</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">آرشیو مقالات</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">ارسال مقاله</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">راهنمای نویسندگان</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Categories -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-list ml-2"></i>دسته‌بندی‌ها
+                    </h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">علوم کامپیوتر</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">مهندسی</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">پزشکی</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">علوم انسانی</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-phone ml-2"></i>اطلاعات تماس
+                    </h3>
+                    <div class="space-y-2 text-gray-300">
+                        <p><i class="fas fa-envelope ml-2"></i>info@studentjournal.ir</p>
+                        <p><i class="fas fa-phone ml-2"></i>021-12345678</p>
+                        <p><i class="fas fa-map-marker-alt ml-2"></i>تهران، خیابان آزادی</p>
+                    </div>
+                </div>
+                
+                <!-- Social Media -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-share-alt ml-2"></i>شبکه‌های اجتماعی
+                    </h3>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <a href="#" class="text-gray-300 hover:text-blue-400 transition-colors text-2xl">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-blue-600 transition-colors text-2xl">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-blue-800 transition-colors text-2xl">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-pink-500 transition-colors text-2xl">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>© 2024 مجله دانشجویی. تمامی حقوق محفوظ است.</p>
+                <p class="mt-2">طراحی و توسعه توسط <span class="text-blue-400 font-semibold">erfanfmn</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Article Detail Modal -->
+    <div id="articleModal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex justify-between items-center">
+                <h2 id="modalTitle" class="text-2xl font-bold text-gray-800"></h2>
+                <button onclick="closeArticleModal()" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-6">
+                <div id="modalContent">
+                    <!-- Article content will be loaded here -->
+                </div>
+                
+                <!-- Feedback Section -->
+                <div class="mt-8 border-t border-gray-200 pt-8">
+                    <h3 class="text-xl font-semibold mb-4">
+                        <i class="fas fa-comment ml-2"></i>ارسال بازخورد
+                    </h3>
+                    <form id="feedbackForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">نام شما</label>
+                            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">بازخورد شما</label>
+                            <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="نظر خود را درباره این مقاله بنویسید..."></textarea>
+                        </div>
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-paper-plane ml-2"></i>ارسال بازخورد
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        let articles = [
+            {
+                id: 1,
+                title: "هوش مصنوعی و آینده فناوری",
+                summary: "بررسی تأثیرات هوش مصنوعی بر صنایع مختلف و چشم‌انداز آینده این فناوری در زندگی روزمره انسان‌ها",
+                author: "دکتر علی احمدی، مهندس سارا محمدی",
+                category: "علوم کامپیوتر",
+                date: "۱۴۰۳/۰۸/۱۵",
+                views: 2847,
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%234F46E5'/%3E%3Ctext x='200' y='100' text-anchor='middle' dy='.3em' fill='white' font-size='24' font-family='Arial'%3E🤖 AI%3C/text%3E%3C/svg%3E",
+                content: "هوش مصنوعی یکی از مهم‌ترین فناوری‌های قرن بیست و یکم محسوب می‌شود که تأثیر عمیقی بر تمامی جنبه‌های زندگی انسان خواهد داشت. این مقاله به بررسی جنبه‌های مختلف این فناوری و کاربردهای آن در صنایع مختلف می‌پردازد.",
+                isPopular: true
+            },
+            {
+                id: 2,
+                title: "پیشرفت‌های جدید در درمان سرطان",
+                summary: "مروری بر جدیدترین روش‌های درمانی و تکنولوژی‌های نوین در مبارزه با سرطان و امیدهای جدید برای بیماران",
+                author: "دکتر فاطمه رضایی، دکتر محمد کریمی",
+                category: "پزشکی",
+                date: "۱۴۰۳/۰۸/۱۰",
+                views: 1923,
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2310B981'/%3E%3Ctext x='200' y='100' text-anchor='middle' dy='.3em' fill='white' font-size='24' font-family='Arial'%3E🏥 Medical%3C/text%3E%3C/svg%3E",
+                content: "در سال‌های اخیر، پیشرفت‌های چشمگیری در زمینه درمان سرطان حاصل شده است که امید به زندگی بیماران را به طور قابل توجهی افزایش داده است. این مقاله به بررسی این پیشرفت‌ها می‌پردازد.",
+                isPopular: true
+            },
+            {
+                id: 3,
+                title: "تأثیر شبکه‌های اجتماعی بر جامعه",
+                summary: "تحلیل جامعه‌شناختی از نقش رسانه‌های اجتماعی در تغییر الگوهای ارتباطی و تأثیرات آن بر روابط انسانی",
+                author: "دکتر مریم حسینی",
+                category: "علوم انسانی",
+                date: "۱۴۰۳/۰۸/۰۵",
+                views: 1654,
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%238B5CF6'/%3E%3Ctext x='200' y='100' text-anchor='middle' dy='.3em' fill='white' font-size='24' font-family='Arial'%3E📱 Social%3C/text%3E%3C/svg%3E",
+                content: "شبکه‌های اجتماعی در دهه گذشته تحول عمیقی در نحوه ارتباط انسان‌ها ایجاد کرده‌اند و تأثیرات گسترده‌ای بر ساختار اجتماعی داشته‌اند. این مقاله به تحلیل این تأثیرات می‌پردازد.",
+                isPopular: false
+            },
+            {
+                id: 4,
+                title: "انرژی‌های تجدیدپذیر و محیط زیست",
+                summary: "بررسی نقش انرژی‌های پاک در حفاظت از محیط زیست و راه‌حل‌های پایدار برای آینده",
+                author: "مهندس رضا نوری، دکتر زهرا امینی",
+                category: "مهندسی",
+                date: "۱۴۰۳/۰۸/۲۰",
+                views: 987,
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%2306B6D4'/%3E%3Ctext x='200' y='100' text-anchor='middle' dy='.3em' fill='white' font-size='24' font-family='Arial'%3E🌱 Green%3C/text%3E%3C/svg%3E",
+                content: "انرژی‌های تجدیدپذیر نقش کلیدی در حفاظت از محیط زیست و کاهش آلودگی دارند. این مقاله به بررسی انواع مختلف انرژی‌های پاک و مزایای آن‌ها می‌پردازد.",
+                isPopular: false
+            },
+            {
+                id: 5,
+                title: "روان‌شناسی رنگ در طراحی",
+                summary: "تأثیر رنگ‌ها بر روان انسان و کاربرد آن در طراحی گرافیک و معماری داخلی",
+                author: "استاد هنر نگار قاسمی",
+                category: "هنر",
+                date: "۱۴۰۳/۰۸/۱۸",
+                views: 1432,
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%23EC4899'/%3E%3Ctext x='200' y='100' text-anchor='middle' dy='.3em' fill='white' font-size='24' font-family='Arial'%3E🎨 Art%3C/text%3E%3C/svg%3E",
+                content: "رنگ‌ها تأثیر عمیقی بر روان و احساسات انسان دارند. این مقاله به بررسی روان‌شناسی رنگ و کاربردهای عملی آن در طراحی می‌پردازد.",
+                isPopular: true
+            },
+            {
+                id: 6,
+                title: "بلاک‌چین و آینده مالی",
+                summary: "نقش فناوری بلاک‌چین در تحول سیستم‌های مالی و ارزهای دیجیتال",
+                author: "دکتر امیر صادقی، مهندس لیلا کریمی",
+                category: "علوم کامپیوتر",
+                date: "۱۴۰۳/۰۸/۲۲",
+                views: 756,
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%23F59E0B'/%3E%3Ctext x='200' y='100' text-anchor='middle' dy='.3em' fill='white' font-size='24' font-family='Arial'%3E⛓️ Blockchain%3C/text%3E%3C/svg%3E",
+                content: "فناوری بلاک‌چین پتانسیل تحول بنیادین در سیستم‌های مالی را دارد. این مقاله به بررسی کاربردها و چالش‌های این فناوری می‌پردازد.",
+                isPopular: false
+            }
+        ];
+
+        // News data
+        const news = [
+            {
+                id: 1,
+                title: "فراخوان ارسال مقالات برای شماره بهار ۱۴۰۴",
+                content: "مجله دانشجویی از تمامی دانشجویان و پژوهشگران دعوت می‌کند تا مقالات خود را برای شماره بهار ۱۴۰۴ ارسال نمایند. مهلت ارسال: ۱۴۰۳/۱۲/۲۹",
+                date: "۱۴۰۳/۰۸/۲۵",
+                type: "فراخوان"
+            },
+            {
+                id: 2,
+                title: "برگزاری وبینار آموزشی نگارش مقالات علمی",
+                content: "وبینار آموزشی با موضوع 'اصول نگارش مقالات علمی' روز پنج‌شنبه ۱۴۰۳/۰۹/۰۵ ساعت ۱۶ برگزار خواهد شد. ثبت‌نام رایگان.",
+                date: "۱۴۰۳/۰۸/۲۰",
+                type: "رویداد"
+            },
+            {
+                id: 3,
+                title: "تغییر در فرآیند داوری مقالات",
+                content: "از این پس، فرآیند داوری مقالات در سه مرحله انجام خواهد شد تا کیفیت مقالات منتشر شده بهبود یابد.",
+                date: "۱۴۰۳/۰۸/۱۸",
+                type: "اطلاعیه"
+            },
+            {
+                id: 4,
+                title: "راه‌اندازی بخش جدید: مقالات بین‌رشته‌ای",
+                content: "بخش جدیدی با عنوان 'مقالات بین‌رشته‌ای' به مجله اضافه شد که امکان انتشار پژوهش‌های میان‌رشته‌ای را فراهم می‌کند.",
+                date: "۱۴۰۳/۰۸/۱۰",
+                type: "اطلاعیه"
+            }
+        ];
+
+        function getCategoryColor(category) {
+            const colors = {
+                'علوم کامپیوتر': 'bg-blue-100 text-blue-800',
+                'مهندسی': 'bg-orange-100 text-orange-800',
+                'پزشکی': 'bg-green-100 text-green-800',
+                'علوم انسانی': 'bg-purple-100 text-purple-800',
+                'هنر': 'bg-pink-100 text-pink-800'
+            };
+            return colors[category] || 'bg-gray-100 text-gray-800';
+        }
+
+        function createArticleCard(article) {
+            return `
+                <div class="bg-white rounded-lg shadow-md card-hover overflow-hidden">
+                    <img src="${article.image}" alt="${article.title}" class="article-image">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="${getCategoryColor(article.category)} text-sm px-3 py-1 rounded-full">${article.category}</span>
+                            <span class="text-gray-500 text-sm">${article.date}</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3 text-gray-800 cursor-pointer hover:text-blue-600 transition-colors" onclick="viewArticle(${article.id})">
+                            ${article.title}
+                        </h3>
+                        <p class="text-gray-600 mb-4 leading-relaxed">${article.summary}</p>
+                        <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                            <span><i class="fas fa-user ml-1"></i>${article.author}</span>
+                            <span><i class="fas fa-eye ml-1"></i>${article.views.toLocaleString()} بازدید</span>
+                        </div>
+                        <button onclick="viewArticle(${article.id})" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-book-open ml-2"></i>مطالعه مقاله
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadArticles() {
+            const popularArticles = articles.filter(article => article.isPopular);
+            const latestArticles = articles.slice().sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+
+            document.getElementById('popularArticles').innerHTML = popularArticles.map(createArticleCard).join('');
+            document.getElementById('latestArticles').innerHTML = latestArticles.map(createArticleCard).join('');
+        }
+
+        function viewArticle(id) {
+            const article = articles.find(a => a.id === id);
+            if (article) {
+                // Increment view count
+                article.views++;
+                
+                document.getElementById('modalTitle').textContent = article.title;
+                document.getElementById('modalContent').innerHTML = `
+                    <div class="mb-6">
+                        <img src="${article.image}" alt="${article.title}" class="w-full h-64 object-cover rounded-lg mb-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <span class="${getCategoryColor(article.category)} text-sm px-3 py-1 rounded-full">${article.category}</span>
+                            <span class="text-gray-500"><i class="fas fa-calendar ml-1"></i>${article.date}</span>
+                            <span class="text-gray-500"><i class="fas fa-eye ml-1"></i>${article.views.toLocaleString()} بازدید</span>
+                        </div>
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-gray-800 mb-2">نویسندگان:</h4>
+                            <p class="text-gray-600">${article.author}</p>
+                        </div>
+                    </div>
+                    <div class="prose max-w-none text-gray-800 leading-relaxed mb-8">
+                        <p class="mb-4">${article.content}</p>
+                        <p class="mb-4">این مقاله شامل تحقیقات جامع و تحلیل‌های دقیق در زمینه موضوع مورد بحث است. برای دسترسی به متن کامل مقاله، از دکمه دانلود استفاده کنید.</p>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <p class="text-blue-800"><strong>نکته:</strong> این مقاله پس از بررسی علمی و داوری منتشر شده است.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 mb-8">
+                        <button onclick="downloadArticle(${article.id})" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-download ml-2"></i>دانلود مقاله (PDF)
+                        </button>
+                        <button onclick="shareArticle(${article.id})" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-share ml-2"></i>اشتراک‌گذاری
+                        </button>
+                    </div>
+                `;
+                document.getElementById('articleModal').classList.add('active');
+                
+                // Update view count in the UI
+                loadArticles();
+            }
+        }
+
+        function closeArticleModal() {
+            document.getElementById('articleModal').classList.remove('active');
+        }
+
+        function downloadArticle(id) {
+            const article = articles.find(a => a.id === id);
+            alert(`دانلود مقاله "${article.title}" آغاز شد! 📥`);
+        }
+
+        function shareArticle(id) {
+            const article = articles.find(a => a.id === id);
+            if (navigator.share) {
+                navigator.share({
+                    title: article.title,
+                    text: article.summary,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('لینک مقاله کپی شد! 📋');
+            }
+        }
+
+        // Statistics counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stats-counter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const increment = target / 100;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = Math.floor(current).toLocaleString();
+                    }
+                }, 20);
+            });
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                const searchTerm = this.value.toLowerCase();
+                const filteredArticles = articles.filter(article => 
+                    article.title.toLowerCase().includes(searchTerm) ||
+                    article.summary.toLowerCase().includes(searchTerm) ||
+                    article.author.toLowerCase().includes(searchTerm)
+                );
+                
+                if (filteredArticles.length > 0) {
+                    document.getElementById('popularArticles').innerHTML = filteredArticles.map(createArticleCard).join('');
+                    document.getElementById('latestArticles').innerHTML = '';
+                } else {
+                    document.getElementById('popularArticles').innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">هیچ مقاله‌ای یافت نشد</div>';
+                    document.getElementById('latestArticles').innerHTML = '';
+                }
+            }
+        });
+
+        // Feedback form
+        document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('بازخورد شما با موفقیت ارسال شد! 🙏');
+            this.reset();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('articleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeArticleModal();
+            }
+        });
+
+        // Page navigation functions
+        function hideAllPages() {
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('submitPage').classList.add('hidden');
+            document.getElementById('aboutPage').classList.add('hidden');
+            document.getElementById('archivePage').classList.add('hidden');
+            document.getElementById('newsPage').classList.add('hidden');
+            document.getElementById('allArticlesPage').classList.add('hidden');
+            document.getElementById('heroSection').classList.add('hidden');
+            document.getElementById('statsSection').classList.add('hidden');
+        }
+
+        function showHomePage() {
+            hideAllPages();
+            document.getElementById('homePage').classList.remove('hidden');
+            document.getElementById('heroSection').classList.remove('hidden');
+            document.getElementById('statsSection').classList.remove('hidden');
+            loadArticles();
+            updateStats();
+        }
+
+        function showSubmitForm() {
+            hideAllPages();
+            document.getElementById('submitPage').classList.remove('hidden');
+        }
+
+        function showAboutPage() {
+            hideAllPages();
+            document.getElementById('aboutPage').classList.remove('hidden');
+        }
+
+        function showArchivePage() {
+            hideAllPages();
+            document.getElementById('archivePage').classList.remove('hidden');
+            loadArchiveArticles();
+        }
+
+        function showNewsPage() {
+            hideAllPages();
+            document.getElementById('newsPage').classList.remove('hidden');
+            loadNews();
+        }
+
+        function showAllArticles(type) {
+            hideAllPages();
+            document.getElementById('allArticlesPage').classList.remove('hidden');
+            
+            let articlesToShow = [];
+            let title = '';
+            
+            if (type === 'popular') {
+                articlesToShow = articles.filter(article => article.isPopular);
+                title = '<i class="fas fa-fire text-orange-500 ml-3"></i>پربازدیدترین مقالات';
+            } else if (type === 'latest') {
+                articlesToShow = articles.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+                title = '<i class="fas fa-clock text-green-500 ml-3"></i>جدیدترین مقالات';
+            }
+            
+            document.getElementById('allArticlesTitle').innerHTML = title;
+            document.getElementById('allArticlesList').innerHTML = articlesToShow.map(createArticleCard).join('');
+        }
+
+        function showCategoryArticles(category) {
+            hideAllPages();
+            document.getElementById('allArticlesPage').classList.remove('hidden');
+            
+            const categoryArticles = articles.filter(article => article.category === category);
+            document.getElementById('allArticlesTitle').innerHTML = `<i class="fas fa-list text-blue-500 ml-3"></i>مقالات ${category}`;
+            document.getElementById('allArticlesList').innerHTML = categoryArticles.map(createArticleCard).join('');
+        }
+
+        function loadArchiveArticles() {
+            document.getElementById('archiveArticles').innerHTML = articles.map(createArticleCard).join('');
+        }
+
+        function filterArchive(category) {
+            const buttons = document.querySelectorAll('#archivePage button');
+            buttons.forEach(btn => {
+                btn.className = 'bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors';
+            });
+            event.target.className = 'bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors';
+            
+            let filteredArticles = category === 'all' ? articles : articles.filter(article => article.category === category);
+            document.getElementById('archiveArticles').innerHTML = filteredArticles.map(createArticleCard).join('');
+        }
+
+        function loadNews() {
+            const newsHTML = news.map(item => `
+                <div class="bg-gray-50 rounded-lg p-6 border-r-4 ${getNewsTypeColor(item.type)}">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-medium ${getNewsTypeBadge(item.type)} px-3 py-1 rounded-full">${item.type}</span>
+                        <span class="text-gray-500 text-sm">${item.date}</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">${item.title}</h3>
+                    <p class="text-gray-600 leading-relaxed">${item.content}</p>
+                </div>
+            `).join('');
+            
+            document.getElementById('newsList').innerHTML = newsHTML;
+        }
+
+        function getNewsTypeColor(type) {
+            const colors = {
+                'فراخوان': 'border-blue-500',
+                'رویداد': 'border-green-500',
+                'اطلاعیه': 'border-orange-500'
+            };
+            return colors[type] || 'border-gray-500';
+        }
+
+        function getNewsTypeBadge(type) {
+            const colors = {
+                'فراخوان': 'bg-blue-100 text-blue-800',
+                'رویداد': 'bg-green-100 text-green-800',
+                'اطلاعیه': 'bg-orange-100 text-orange-800'
+            };
+            return colors[type] || 'bg-gray-100 text-gray-800';
+        }
+
+        // Submit form handling
+        document.getElementById('submitForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('submitTitle').value,
+                category: document.getElementById('submitCategory').value,
+                authors: document.getElementById('submitAuthors').value,
+                email: document.getElementById('submitEmail').value,
+                summary: document.getElementById('submitSummary').value,
+                file: document.getElementById('submitFile').files[0]
+            };
+            
+            // Simulate sending email (in real implementation, this would be handled by backend)
+            alert(`مقاله "${formData.title}" با موفقیت ارسال شد! 📧\n\nاطلاعات مقاله به ایمیل ادمین ارسال شد:\n- عنوان: ${formData.title}\n- نویسنده: ${formData.authors}\n- ایمیل: ${formData.email}\n\nمقاله پس از بررسی منتشر خواهد شد.`);
+            
+            this.reset();
+            showHomePage();
+        });
+
+        // Update statistics based on actual data
+        function updateStats() {
+            const totalArticles = articles.length;
+            const totalViews = articles.reduce((sum, article) => sum + article.views, 0);
+            const uniqueAuthors = new Set(articles.map(article => article.author)).size;
+            
+            document.getElementById('totalArticles').textContent = totalArticles.toLocaleString();
+            document.getElementById('totalViews').textContent = totalViews.toLocaleString();
+            document.getElementById('totalAuthors').textContent = uniqueAuthors.toLocaleString();
+        }
+
+        // Enhanced feedback form with email simulation
+        document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const articleTitle = document.getElementById('modalTitle').textContent;
+            const feedbackName = this.querySelector('input[type="text"]').value;
+            const feedbackContent = this.querySelector('textarea').value;
+            
+            // Simulate sending feedback email
+            alert(`بازخورد شما ارسال شد! 📧\n\nاطلاعات ارسال شده:\n- مقاله: ${articleTitle}\n- نام: ${feedbackName}\n- بازخورد: ${feedbackContent}\n\nبازخورد به ایمیل نویسنده ارسال شد.`);
+            
+            this.reset();
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showHomePage();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97456af1410d9915',t:'MTc1NjA2NTQzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
